@@ -164,24 +164,27 @@ class DB
                 {
                     return $this;
                 }
-                while($row = mysql_fetch_assoc($result))
+                if(mysql_affected_rows())
                 {
-                    //考虑到联合主键
-                    if($row['Key'] == 'PRI' && !isset($fields['pri']))
+                    while($row = mysql_fetch_assoc($result))
                     {
-                        $fields['pri'] = strtolower($row['Field']);
-                    }else{
-                        $fields[] = strtolower($row['Field']);
+                        //考虑到联合主键
+                        if($row['Key'] == 'PRI' && !isset($fields['pri']))
+                        {
+                            $fields['pri'] = strtolower($row['Field']);
+                        }else{
+                            $fields[] = strtolower($row['Field']);
+                        }
+                        if($row['Extra'] == 'auto_increment')
+                        {
+                            $auto = 'yes';
+                        }
                     }
-                    if($row['Extra'] == 'auto_increment')
+                    //如果表中没有主键,则将第一列当作主键
+                    if(!array_key_exists('pri', $fields))
                     {
-                        $auto = 'yes';
+                        $fields['pri'] = array_shift($fields);
                     }
-                }
-                //如果表中没有主键,则将第一列当作主键
-                if(!array_key_exists('pri', $fields))
-                {
-                    $fields['pri'] = array_shift($fields);
                 }
                 $this->fields = $fields;
                 $this->auto = $auto;
@@ -549,10 +552,13 @@ class DB
     private function _getAll($res)
     {
         $result = array();
-        //取出所有记录返回二维数组
-        while($row = mysql_fetch_assoc($res))
+        if(mysql_affected_rows())
         {
-            $result[] = $row;
+            //取出所有记录返回二维数组
+            while($row = mysql_fetch_assoc($res))
+            {
+                $result[] = $row;
+            }
         }
         return $result;
     }
@@ -565,11 +571,14 @@ class DB
     private function _getOne($res)
     {
         $result = array();
-        //取出一条记录返回一维数组
-        while($row = mysql_fetch_assoc($res))
+        if(mysql_affected_rows())
         {
-            $result = $row;
-            break;
+            //取出一条记录返回一维数组
+            while($row = mysql_fetch_assoc($res))
+            {
+                $result = $row;
+                break;
+            }
         }
         return $result;  //一维关联数组
     }
