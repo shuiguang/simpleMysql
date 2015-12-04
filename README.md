@@ -8,7 +8,7 @@ simple mysql driver for php
 
 $db = new DB($db_config);
 
-//统计数据表总记录行数,返回整型
+//统计数据表总记录行数,返回整型数字
 
 $total = $db -> table($db_table) -> total();
 
@@ -20,7 +20,7 @@ $task = $db -> table($db_table) -> where(array('id' => 1)) -> find();
 
 //查询多条记录,返回二维数组
 
-$tasks = $db -> table($db_table) -> limit('2,3') -> order('id desc') select();
+$tasks = $db -> table($db_table) -> limit('2,3') -> order('id desc') -> select();
 
 
 //新增一条记录
@@ -45,9 +45,6 @@ $db -> table($db_table) -> where(array('id' => $last_insert_id)) -> update($arr)
 //删除一条记录
 
 $db -> table($db_table) -> where(array('id' => $last_insert_id)) -> delete();
-
-
-it was isolated from brophp lib, you can look up BroPHP.chm  for more infomation.
 
 
 //新特性:MyISAM写锁定和读锁定
