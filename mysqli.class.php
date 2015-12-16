@@ -163,18 +163,21 @@ class DB
                 {
                     return $this;
                 }
-                while($row = $result->fetch_assoc())
+                if($result)
                 {
-                    //考虑到联合主键
-                    if($row['Key'] == 'PRI' && !isset($fields['pri']))
+                    while($row = $result->fetch_assoc())
                     {
-                        $fields['pri'] = strtolower($row['Field']);
-                    }else{
-                        $fields[] = strtolower($row['Field']);
-                    }
-                    if($row['Extra'] == 'auto_increment')
-                    {
-                        $auto = 'yes';
+                        //考虑到联合主键
+                        if($row['Key'] == 'PRI' && !isset($fields['pri']))
+                        {
+                            $fields['pri'] = strtolower($row['Field']);
+                        }else{
+                            $fields[] = strtolower($row['Field']);
+                        }
+                        if($row['Extra'] == 'auto_increment')
+                        {
+                            $auto = 'yes';
+                        }
                     }
                 }
                 //如果表中没有主键,则将第一列当作主键
